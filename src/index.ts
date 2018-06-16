@@ -641,7 +641,7 @@ export const partial = <P extends Props>(
     useIdentity(types, len)
       ? identity
       : a => {
-          const s: { [key: string]: any } = {}
+          const s: { [key: string]: any } = { ...(a as any) }
           for (let i = 0; i < len; i++) {
             const k = keys[i]
             const ak = a[k]
@@ -774,7 +774,7 @@ export const union = <RTS extends Array<Mixed>>(
       }
       return failures(errors)
     },
-    types.every(type => type.encode === identity)
+    useIdentity(types, len)
       ? identity
       : a => {
           let i = 0
@@ -859,7 +859,7 @@ export function intersection<RTS extends Array<Mixed>>(
       }
       return errors.length ? failures(errors) : success(a)
     },
-    types.every(type => type.encode === identity)
+    useIdentity(types, len)
       ? identity
       : a => {
           let s = a
@@ -956,7 +956,7 @@ export function tuple<RTS extends Array<Mixed>>(
         return errors.length ? failures(errors) : success(t)
       }
     },
-    types.every(type => type.encode === identity) ? identity : a => types.map((type, i) => type.encode(a[i])),
+    useIdentity(types, len) ? identity : a => types.map((type, i) => type.encode(a[i])),
     types
   )
 }
@@ -1206,7 +1206,7 @@ export const taggedUnion = <Tag extends string, RTS extends Array<Tagged<Tag>>>(
         }
       }
     },
-    types.every(type => type.encode === identity) ? identity : a => types[getIndex(a[tag] as any)].encode(a),
+    useIdentity(types, len) ? identity : a => types[getIndex(a[tag] as any)].encode(a),
     types
   )
 }
